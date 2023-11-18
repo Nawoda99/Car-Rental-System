@@ -10,16 +10,18 @@ using System.Windows.Forms;
 
 namespace creat_car_rental_system
 {
-    public partial class Manage_Car : Form
+    public partial class adminDashboard : Form
     {
-        public Manage_Car()
+        public adminDashboard()
         {
             InitializeComponent();
         }
 
-        private void Manage_Car_Load(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-
+            ManageCustomer manageCustomer = new ManageCustomer();
+            this.Hide();
+            manageCustomer.Show();
         }
     }
 }

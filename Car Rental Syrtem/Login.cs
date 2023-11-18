@@ -17,43 +17,55 @@ namespace creat_car_rental_system
         public login()
         {
             InitializeComponent();
+
+           
+
         }
 
         private void btn_next_Click(object sender, EventArgs e)
         {
-            if (txt_usern.Text == "")
+          if(txt_usern.Text == "admin" && txt_userpassword.Text == "admin")
             {
-                MessageBox.Show("Username Cannot be blank", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                adminDashboard adminDashboard = new adminDashboard();
+                this.Hide();
+                adminDashboard.Show();
             }
-            else if (txt_userpassword.Text == "")
+          else
             {
-                MessageBox.Show("Password Cannot be blank", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
-            else
-            {
-                SqlConnection con = dbConnection.GetSqlConnection();
-
-                SqlCommand cmd = new SqlCommand("Select * from customer where username='" + txt_usern.Text + "' and Pass ='" + txt_userpassword.Text + "' ", con);
-
-                con.Open();
-
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                if (dt.Rows.Count != 0)
+                if (txt_usern.Text == "")
                 {
-                    int cusid = Convert.ToInt32(dt.Rows[0]["cusid"]);
-                    Dashboard dashboard = new Dashboard(cusid);
-                    this.Hide();
-                    dashboard.Show();
-                    
-                }
+                    MessageBox.Show("Username Cannot be blank", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                }
+                else if (txt_userpassword.Text == "")
+                {
+                    MessageBox.Show("Password Cannot be blank", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
                 else
                 {
-                    MessageBox.Show("Wrong Username OR Password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    SqlConnection con = dbConnection.GetSqlConnection();
+
+                    SqlCommand cmd = new SqlCommand("Select * from customer where username='" + txt_usern.Text + "' and Pass ='" + txt_userpassword.Text + "' ", con);
+
+                    con.Open();
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    if (dt.Rows.Count != 0)
+                    {
+                        int cusid = Convert.ToInt32(dt.Rows[0]["cusid"]);
+                        Dashboard dashboard = new Dashboard(cusid);
+                        this.Hide();
+                        dashboard.Show();
+
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Wrong Username OR Password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

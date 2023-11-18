@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace creat_car_rental_system
 {
@@ -91,13 +92,13 @@ namespace creat_car_rental_system
                     if (detailsReader.Read())
                     {
 
-                        label1.Text = detailsReader["model"].ToString();
-                        label2.Text = detailsReader["status"].ToString();
-                        label3.Text = detailsReader["price"].ToString();
+                        lbl_model.Text = detailsReader["model"].ToString();
+                        lbl_status.Text = detailsReader["status"].ToString();
+                        lbl_price.Text = detailsReader["price"].ToString();
                     }
 
 
-                    // detailsReader.Close();
+                     detailsReader.Close();
                 }
                 catch (Exception ex)
                 {
@@ -105,6 +106,49 @@ namespace creat_car_rental_system
                     MessageBox.Show("Error: " + ex.Message);
                 }
 
+            }
+
+        }
+
+        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SqlConnection con = dbConnection.GetSqlConnection();
+         
+            int carid = 1;
+            int cusid = 1;
+            
+            SqlCommand cmd = new SqlCommand("insert into customer_book_car(bookedDate,promisedDate,status,price,carid,cusid,totalAmount) values( '" + date_rent.Value.ToString("d") + "', '" + date_promised.Value.ToString("d") + "','" + lbl_status.Text + "','" + lbl_price.Text + "','" + carid + "','" + cusid + "','" + lbl_amount.Text + "') ", con); ;
+            con.Open();
+            cmd.ExecuteNonQuery();
+
+            MessageBox.Show("Registration Successfully.", " Success" + MessageBoxButtons.OK + MessageBoxIcon.Information);
+
+            
+
+
+        }
+
+        private void date_promised_ValueChanged(object sender, EventArgs e)
+        {
+            DateTime rent = date_rent.Value;
+            DateTime promised = date_promised.Value;
+
+           
+            int dayDifference = (int)(promised - rent).TotalDays;
+
+            if (int.TryParse(lbl_price.Text, out int price))
+            {
+                
+                int totalAmount = dayDifference * price;
+
+                
+                lbl_amount.Text = totalAmount.ToString();
+            }
+            else
+            {
+                
+                MessageBox.Show("Invalid price format. Please enter a valid numeric value.");
             }
 
         }
