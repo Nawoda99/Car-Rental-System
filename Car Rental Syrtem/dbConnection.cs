@@ -13,7 +13,7 @@ namespace creat_car_rental_system
 
         public static SqlConnection GetSqlConnection()
         {
-            conn = new SqlConnection("Data Source=DESKTOP-IL8KJC9;Initial Catalog=carRental;Integrated Security=True");
+            conn = new SqlConnection("Data Source=PC01-30;Initial Catalog=carRental;Integrated Security=True");
             return conn;
         }
 

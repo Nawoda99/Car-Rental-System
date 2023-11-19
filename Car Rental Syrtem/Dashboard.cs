@@ -13,6 +13,7 @@ namespace creat_car_rental_system
 {
     public partial class Dashboard : Form
     {
+        private int id;
         public Dashboard(int id)
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace creat_car_rental_system
 
         }
 
-        private int id;
+       
 
         public void getName(int id)
         {
@@ -81,7 +82,7 @@ namespace creat_car_rental_system
 
         private void btn_booking_Click(object sender, EventArgs e)
         {
-            Booking booking = new Booking();
+            Booking booking = new Booking(id);
 
             this.Hide();
             booking.Show();

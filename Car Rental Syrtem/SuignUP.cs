@@ -26,7 +26,7 @@ namespace creat_car_rental_system
 
         private void button1_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = dbConnection.GetSqlConnection())
+            SqlConnection con = dbConnection.GetSqlConnection();
             {
                 if (txtname.Text != "" && txtuname.Text != "" && txtmobile.Text != "" && txtaddress.Text != "" && txtpass.Text != "" && txtconpass.Text != "" && txtpass.Text == txtconpass.Text)
                 {

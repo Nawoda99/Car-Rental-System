@@ -14,10 +14,36 @@ namespace creat_car_rental_system
 {
     public partial class Booking : Form
     {
-        public Booking()
+        private int customerId;
+        private int carId;
+        private String status; 
+        public Booking(int id)
         {
             InitializeComponent();
             LoadDataIntoComboBox();
+            this.customerId = id;
+            getName(id);
+
+        }
+
+        public void getName(int id)
+        {
+            SqlConnection con = dbConnection.GetSqlConnection();
+
+            SqlCommand cmd = new SqlCommand("SELECT cusname FROM customer WHERE cusid = '" + id + "' ", con);
+
+            con.Open();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            if (dt.Rows.Count > 0)
+            {
+
+                lbl_name.Text = dt.Rows[0]["cusname"].ToString();
+            }
+
+
+
         }
 
         private void LoadDataIntoComboBox()
@@ -27,7 +53,8 @@ namespace creat_car_rental_system
 
             SqlConnection con = dbConnection.GetSqlConnection();
 
-            SqlCommand cmd = new SqlCommand("SELECT carname FROM car ", con);
+            SqlCommand cmd = new SqlCommand("SELECT carname,status FROM car ", con);
+            
 
             con.Open();
 
@@ -46,6 +73,7 @@ namespace creat_car_rental_system
                         {
                             
                             cmb_car.Items.Add(reader["carname"].ToString());
+                            status = reader["status"].ToString();
                         }
 
                        
@@ -70,11 +98,12 @@ namespace creat_car_rental_system
 
         private void cmb_car_SelectedIndexChanged(object sender, EventArgs e)
         {
+            lbl_amount.Text = "";
             if (cmb_car.SelectedIndex != -1)
             {
                 SqlConnection con = dbConnection.GetSqlConnection();
 
-                SqlCommand cmd = new SqlCommand("SELECT model, status,price  FROM car WHERE carname = '" + cmb_car.SelectedItem.ToString() + "'", con);
+                SqlCommand cmd = new SqlCommand("SELECT carid, model, status,price  FROM car WHERE carname = '" + cmb_car.SelectedItem.ToString() + "'", con);
 
                 con.Open();
 
@@ -91,7 +120,7 @@ namespace creat_car_rental_system
 
                     if (detailsReader.Read())
                     {
-
+                        carId = Convert.ToInt32(detailsReader["carid"]);
                         lbl_model.Text = detailsReader["model"].ToString();
                         lbl_status.Text = detailsReader["status"].ToString();
                         lbl_price.Text = detailsReader["price"].ToString();
@@ -113,18 +142,26 @@ namespace creat_car_rental_system
         
         private void button2_Click(object sender, EventArgs e)
         {
+            string booked = "Booked";
             SqlConnection con = dbConnection.GetSqlConnection();
-         
-            int carid = 1;
-            int cusid = 1;
-            
-            SqlCommand cmd = new SqlCommand("insert into customer_book_car(bookedDate,promisedDate,status,price,carid,cusid,totalAmount) values( '" + date_rent.Value.ToString("d") + "', '" + date_promised.Value.ToString("d") + "','" + lbl_status.Text + "','" + lbl_price.Text + "','" + carid + "','" + cusid + "','" + lbl_amount.Text + "') ", con); ;
-            con.Open();
-            cmd.ExecuteNonQuery();
 
-            MessageBox.Show("Registration Successfully.", " Success" + MessageBoxButtons.OK + MessageBoxIcon.Information);
+            if (lbl_status.Text == "Booked")
+            {
+                MessageBox.Show("This Car Already Booked", " Success" + MessageBoxButtons.OK + MessageBoxIcon.Information);
+            }
+            else
+            {
+                SqlCommand cmd = new SqlCommand("insert into customer_book_car(bookedDate,promisedDate,status,amount,carid,cusid) values( '" + date_rent.Value.ToString("d") + "', '" + date_promised.Value.ToString("d") + "','" + lbl_status.Text + "','" + lbl_amount.Text + "','" + carId + "','" + customerId + "') ", con); ;
 
-            
+                SqlCommand cmnd = new SqlCommand("Update car SET status = '" + booked + "' WHERE carid='" + carId + "'", con);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+                cmnd.ExecuteNonQuery();
+
+                MessageBox.Show("Registration Successfully.", " Success" + MessageBoxButtons.OK + MessageBoxIcon.Information);
+
+            }
 
 
         }
@@ -151,6 +188,13 @@ namespace creat_car_rental_system
                 MessageBox.Show("Invalid price format. Please enter a valid numeric value.");
             }
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Dashboard da = new Dashboard(customerId);
+            this.Hide();
+            da.Show();
         }
     }
 }
